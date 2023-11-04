@@ -5,7 +5,9 @@ import com.example.hostelManagementTool.Enum.RoomType;
 import com.example.hostelManagementTool.Model.Bed;
 import com.example.hostelManagementTool.Model.Hostel;
 import com.example.hostelManagementTool.Model.Room;
+import com.example.hostelManagementTool.Repository.BedRepository;
 import com.example.hostelManagementTool.Repository.HostelRepository;
+import com.example.hostelManagementTool.Repository.RoomRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
@@ -21,6 +23,10 @@ public class HostelServices {
         HostelRepository hostelRepository;
         @Autowired
         ObjectMapper objectMapper;
+        @Autowired
+        BedRepository bedRepository;
+        @Autowired
+        RoomRepository roomRepository;
         @Autowired
         KafkaTemplate<String,String> kafkaTemplate;
 
@@ -38,19 +44,40 @@ public class HostelServices {
                         throw new Exception("Room Not Available");
                 }
                 Bed bookingBed=null;
+                Room bookingRoom=null;
                 for(Room room:filteredRoom){
                         for(Bed bed:room.getBedList()){
                                 if(bed.isAvailable()){
                                         bookingBed=bed;
+                                        bookingRoom=room;
                                         break;
                                 }
                         }
                 }
                 JSONObject bookingObject=new JSONObject();
-                bookingObject.put("bed",bookingBed);
+                bookingObject.put("bedNo",bookingBed.getBedNo());
                 bookingObject.put("regNum",regNumber);
                 String bookingData=bookingObject.toString();
                 kafkaTemplate.send("book_bed",bookingData);
+                //if successfull
+                bookingBed.setAvailable(false);
+                bedRepository.save(bookingBed);
+
+                bookingRoom.getBedList().get(bookingBed.getBedNo()).setAvailable(false);
+                roomRepository.save(bookingRoom);
+
+                List<Bed> bedList=bookingRoom.getBedList().stream().filter(bed -> bed.isAvailable()).collect(Collectors.toList());
+                if(bedList.size()==0){
+                        bookingRoom.setAvailable(false);
+                        roomRepository.save(bookingRoom);
+                }
+
+
+
+
+
+
+
 
 
 
