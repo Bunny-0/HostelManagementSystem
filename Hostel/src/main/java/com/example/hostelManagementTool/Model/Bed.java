@@ -1,21 +1,16 @@
 package com.example.hostelManagementTool.Model;
 
-import com.example.hostelManagementTool.Enum.RoomType;
 import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.List;
 
 @Data
 @Entity
-public class Room {
+public class Bed {
 
     @Id
-    int roomNo;
+    int bedNo;
     boolean available;
-    RoomType roomType;
-    List<Bed> bedList;
-
 
 }
