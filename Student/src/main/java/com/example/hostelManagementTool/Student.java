@@ -1,9 +1,6 @@
 package com.example.hostelManagementTool;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Student {
@@ -14,5 +11,12 @@ public class Student {
     String name;
     String Class;
     boolean hostel;
+    @Column(columnDefinition = "varchar(255) default 'NA'")
+    String HostelType;
+    @Column(columnDefinition = "varchar(255) default 'NA'")
+    String RoomType;
+
+
+
 
 }

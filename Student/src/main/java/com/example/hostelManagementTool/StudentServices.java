@@ -18,12 +18,11 @@ public class StudentServices {
         if(student.hostel){
             JSONObject jsonObject=new JSONObject();
             jsonObject.put("RollNo",student.RegNo);
+            jsonObject.put("RoomType",student.RoomType);
+            jsonObject.put("HostelType",student.HostelType);
             String data=jsonObject.toString();
-            kafkaTemplate.send("AllotHostel",data);
-
+            kafkaTemplate.send("Allot_Hostel",data);
         }
         return student;
-
-
     }
 }
