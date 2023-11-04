@@ -12,5 +12,7 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int RegNo;
     String name;
+    String Class;
+    boolean hostel;
 
 }
