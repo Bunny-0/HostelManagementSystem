@@ -65,9 +65,11 @@ public class HostelServices {
         }
         public String bookBed(int bedNo,int regNo,String fromAccount){
             JSONObject data=new JSONObject();
+            Bed bed=bedRepository.findById(bedNo).get();
             data.put("bedNo",bedNo);
             data.put("regNo",regNo);
             data.put("fromAccount",fromAccount);
+            data.put("amount",bed.getAmount());
             String message=data.toString();
             kafkaTemplate.send("create_Transaction",message);
 

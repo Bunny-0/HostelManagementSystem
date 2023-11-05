@@ -1,5 +1,6 @@
-package com.example.hostelManagementTool;
+package com.example.hostelManagementTool.Model;
 
+import com.example.hostelManagementTool.BookingStatus;
 import lombok.Data;
 
 import javax.persistence.Entity;
