@@ -15,11 +15,17 @@ public class BookingService {
     BookingRepository bookingRepository;
     @Autowired
     ObjectMapper objectMapper;
+    String toAccount="1234567890987";
 
-@KafkaListener(topics = {"book_bed"},groupId = "Group2")
+@KafkaListener(topics = {"create_Transaction"},groupId = "Group2")
     public void bookBed(String message) throws JsonProcessingException {
-    JSONObject dataObj=objectMapper.readValue(message,JSONObject.class);
-    int bedNo= (int) dataObj.get("bed");
+        JSONObject data=objectMapper.readValue(message,JSONObject.class);
+        int bedNo= (int) data.get("bedNo");
+        int regNo= (int) data.get("regNo");
+        String fromAccount= (String) data.get("fromAccount");
+
+
+
 
 }
 

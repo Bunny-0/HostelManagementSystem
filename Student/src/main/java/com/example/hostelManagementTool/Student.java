@@ -11,6 +11,7 @@ public class Student {
     String name;
     String Class;
     boolean hostel;
+
     @Column(columnDefinition = "varchar(255) default 'NA'")
     String HostelType;
     @Column(columnDefinition = "varchar(255) default 'NA'")
