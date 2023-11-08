@@ -23,6 +23,12 @@ public class StudentServices {
             String data=jsonObject.toString();
             kafkaTemplate.send("Allot_Hostel",data);
         }
+
         return student;
     }
 }
+
+
+
+//Student-->AllotHostel-->Return List<availableBed>(postMan)
+//BookService--->fromWallet,Regno,Bedno.

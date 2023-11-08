@@ -2,6 +2,7 @@ package com.example.hostelManagementTool.Model;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.transaction.TransactionStatus;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

@@ -11,6 +11,7 @@ public class Bed {
 
     @Id
     int bedNo;
+    int regNo;
     boolean available;
     double amount;
 

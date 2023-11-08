@@ -16,7 +16,10 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +37,7 @@ public class HostelServices {
 
 
         @KafkaListener(topics = {"Allot_Hostel"},groupId = "Group1")
-        public Bed allotHostel(String data) throws Exception {
+        public  Map<Integer, List<Integer>> allotHostel(String data) throws Exception {
                 JSONObject message=objectMapper.readValue(data,JSONObject.class);
                 int regNumber= (int) message.get("RollNo");
                 HostelType hostelType= (HostelType) message.get("HostelType");
@@ -45,58 +48,62 @@ public class HostelServices {
                 if(filteredRoom.size()==0){
                         throw new Exception("Room Not Available");
                 }
-                Bed bookingBed=null;
-                Room bookingRoom=null;
+                List<Bed> bookingBed=null;
+                Map<Integer,List<Integer>> bookingRoom=new TreeMap<>();
                 for(Room room:filteredRoom){
                         for(Bed bed:room.getBedList()){
                                 if(bed.isAvailable()){
-                                        bookingBed=bed;
-                                        bookingRoom=room;
-                                        break;
+                                        if(bookingRoom.containsKey(room.getRoomNo()))
+                                        {
+                                                int roomNo=room.getRoomNo();
+                                                List<Integer> bedList=bookingRoom.get(roomNo);
+                                                bedList.add(bed.getBedNo());
+                                                bookingRoom.put(roomNo,bedList);
+
+                                        }
+                                        else {
+                                                List<Integer> bedList=null;
+                                                bedList.add(bed.getBedNo());
+                                                bookingRoom.put(room.getRoomNo(),bedList);
+                                        }
+
                                 }
                         }
                 }
-                return bookingBed;
-
-
-
+                return bookingRoom;
 
 
         }
-        public String bookBed(int bedNo,int regNo,String fromAccount){
-            JSONObject data=new JSONObject();
-            Bed bed=bedRepository.findById(bedNo).get();
-            data.put("bedNo",bedNo);
-            data.put("regNo",regNo);
-            data.put("fromAccount",fromAccount);
-            data.put("amount",bed.getAmount());
-            String message=data.toString();
-            kafkaTemplate.send("create_Transaction",message);
-
-
-
-            //JSONObject bookingObject=new JSONObject();
-//                bookingObject.put("bedNo",bookingBed.getBedNo());
-//                bookingObject.put("regNum",regNumber);
-//                bookingObject.put("amount",bookingBed.getAmount());
-//                String bookingData=bookingObject.toString();
-//                kafkaTemplate.send("book_bed",bookingData);
-//                //if successfull
-//                bookingBed.setAvailable(false);
-//                bedRepository.save(bookingBed);
-//
-//                bookingRoom.getBedList().get(bookingBed.getBedNo()).setAvailable(false);
-//                roomRepository.save(bookingRoom);
-//
-//                List<Bed> bedList=bookingRoom.getBedList().stream().filter(bed -> bed.isAvailable()).collect(Collectors.toList());
-//                if(bedList.isEmpty()){
-//                        bookingRoom.setAvailable(false);
-//                        roomRepository.save(bookingRoom);
-//                }
-
-         return "Success";
-
+        public void bookingData(int roomNo,int bedNo,int regNo,String fromAccount) {
+                JSONObject data = new JSONObject();
+                Bed bed = bedRepository.findById(bedNo).get();
+                data.put("bedNo", bedNo);
+                data.put("regNo", regNo);
+                data.put("fromAccount", fromAccount);
+                data.put("amount", bed.getAmount());
+                data.put("roomNo",roomNo);
+                String message = data.toString();
+                kafkaTemplate.send("create_Transaction", message);
         }
+
+        @KafkaListener(topics = {"bookBed"},groupId = "group")
+
+        public String bookBed(String message){
+                JSONObject jsonObject=new JSONObject();
+                int bedNo= (int) jsonObject.get("bedNo");
+                int regNo= (int) jsonObject.get("regNo");
+                int roomNo=(int) jsonObject.get("roomNo");
+                Bed bed=bedRepository.findById(bedNo).get();
+                bed.setAvailable(false);
+                Room room=roomRepository.findById(roomNo).get();
+                List<Bed> bedList=room.getBedList().stream().filter(bed1 -> bed1.isAvailable()).collect(Collectors.toList());
+                if(bedList.isEmpty()){
+                        room.setAvailable(false);
+                }
+                roomRepository.save(room);
+                return "Booked";
+        }
+
 
         public Hostel addHostel(Hostel hostel){
                 return hostelRepository.save(hostel);
