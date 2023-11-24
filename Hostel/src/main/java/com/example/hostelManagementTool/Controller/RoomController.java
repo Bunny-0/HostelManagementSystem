@@ -1,8 +1,7 @@
 package com.example.hostelManagementTool.Controller;
 
-import com.example.hostelManagementTool.Model.Hostel;
-import com.example.hostelManagementTool.Services.HostelServices;
-import org.json.simple.JSONObject;
+import com.example.hostelManagementTool.Model.Room;
+import com.example.hostelManagementTool.Services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,16 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("hostel")
-public class HostelController {
+@RequestMapping("room")
+public class RoomController {
 
     @Autowired
-    HostelServices hostelServices;
+    RoomService roomService;
 
-
-    @PostMapping("/addHostel")
-    public Hostel addHostel(@RequestBody Hostel hostel){
-        return hostelServices.addHostel(hostel);
+    @PostMapping("/addRoom")
+    public Room addRoom(@RequestBody Room room){
+      return roomService.addRoom(room);
     }
 
 }

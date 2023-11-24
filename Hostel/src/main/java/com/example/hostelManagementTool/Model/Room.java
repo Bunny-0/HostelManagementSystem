@@ -1,20 +1,29 @@
 package com.example.hostelManagementTool.Model;
 
-import com.example.hostelManagementTool.Enum.RoomType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.List;
 
-@Data
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Room {
 
     @Id
     int roomNo;
     boolean available;
-    RoomType roomType;
+
+    String roomType;
+    @ManyToOne
+    @JoinColumn
+    Hostel hostel;
+    @JsonIgnore
+    @OneToMany(mappedBy = "room",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     List<Bed> bedList;
 
 

@@ -30,14 +30,14 @@ public class WalletService {
 
     }
 
-    public Wallet createWallet(String userName){
-        Wallet wallet=Wallet.builder().userName(userName).balance(1000).build();
+    public Wallet createWallet(Wallet wallet){
         walletRepository.save(wallet);
         return wallet;
     }
 
-    @KafkaListener(topics = {"update_wallet"},groupId = "group")
+    @KafkaListener(topics = {"updateWallet"},groupId = "friends_group")
     public void updateWallet(String message) throws JsonProcessingException {
+        System.out.println("Reached in wallet line number ");
         JSONObject receivedData=objectMapper.readValue(message,JSONObject.class);
         String toAccount= (String) receivedData.get("toAccount");
         String fromAccount= (String) receivedData.get("fromAccount");
@@ -46,10 +46,13 @@ public class WalletService {
         int amount=(int) receivedData.get("amount");
         int roomNo=(int) receivedData.get("roomNo");
         String transactionId=(String)receivedData.get("transactionId");
+        System.out.println("Reached in wallet line number ");
         Wallet toWallet=walletRepository.findByUserName(toAccount);
         Wallet fromWallet=walletRepository.findByUserName(fromAccount);
 
+        System.out.println("Reached in wallet");
         if(fromWallet.getBalance()>=amount){
+            System.out.println("inside balance wallet");
             fromWallet.setBalance(fromWallet.getBalance()-amount);
             toWallet.setBalance(toWallet.getBalance()+amount);
             walletRepository.save(fromWallet);
@@ -64,9 +67,10 @@ public class WalletService {
 
 
             String sendMessage=sendToTransaction.toString();
+            System.out.println("Reached in wallet"+sendMessage);
             kafkaTemplate.send("update_transaction",sendMessage);
 
-        }else {
+        } else {
 
             JSONObject sendToTransaction =new JSONObject();
             sendToTransaction.put("transactionId",transactionId);

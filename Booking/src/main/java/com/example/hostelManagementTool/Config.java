@@ -20,26 +20,26 @@ import java.util.Properties;
 @Configuration
 public class Config {
 
-    @Bean
-    LettuceConnectionFactory getConnection(){
-        //Configuration class used for setting up RedisConnection via RedisConnectionFactory using connecting to a single node Redis installation.
-        RedisStandaloneConfiguration redisStandaloneConfiguration=new RedisStandaloneConfiguration();
-        LettuceConnectionFactory lettuceConnectionFactory=new LettuceConnectionFactory(redisStandaloneConfiguration);
-        return lettuceConnectionFactory;
+//    @Bean
+//    LettuceConnectionFactory getConnection(){
+//        //Configuration class used for setting up RedisConnection via RedisConnectionFactory using connecting to a single node Redis installation.
+//        RedisStandaloneConfiguration redisStandaloneConfiguration=new RedisStandaloneConfiguration();
+//        LettuceConnectionFactory lettuceConnectionFactory=new LettuceConnectionFactory(redisStandaloneConfiguration);
+//        return lettuceConnectionFactory;
+//
+//    }
 
-    }
-
-   @Bean
-    RedisTemplate<String,Object> redisTemplate(){
-        RedisTemplate<String,Object> redisTemplate=new RedisTemplate<>();
-       RedisSerializer<String> redisSerializer=new StringRedisSerializer();
-       redisTemplate.setKeySerializer(redisSerializer);
-       JdkSerializationRedisSerializer jdkSerializationRedisSerializer=new JdkSerializationRedisSerializer();
-       redisTemplate.setValueSerializer(jdkSerializationRedisSerializer);
-       redisTemplate.setHashValueSerializer(jdkSerializationRedisSerializer);
-       return  redisTemplate;
-
-   }
+//   @Bean
+//    RedisTemplate<String,Object> redisTemplate(){
+//        RedisTemplate<String,Object> redisTemplate=new RedisTemplate<>();
+//       RedisSerializer<String> redisSerializer=new StringRedisSerializer();
+//       redisTemplate.setKeySerializer(redisSerializer);
+//       JdkSerializationRedisSerializer jdkSerializationRedisSerializer=new JdkSerializationRedisSerializer();
+//       redisTemplate.setValueSerializer(jdkSerializationRedisSerializer);
+//       redisTemplate.setHashValueSerializer(jdkSerializationRedisSerializer);
+//       return  redisTemplate;
+//
+//   }
 
    @Bean
     Properties KafkaProperties(){
